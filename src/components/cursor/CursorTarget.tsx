@@ -3,6 +3,7 @@
 import React, { useRef, useEffect } from "react";
 import { useCursor, CursorType } from "./CursorProvider";
 import { cn } from "@/lib/utils";
+import { cursorConfig } from "./cursorConfig";
 
 interface CursorTargetProps {
   children: React.ReactNode;
@@ -79,9 +80,8 @@ export function CursorTarget({ children, type = "block", className }: CursorTarg
       const centerY = originalRect.top + originalRect.height / 2;
       
       // Magnetic strength for the element itself
-      const strength = 0.2;
-      const offsetX = (e.clientX - centerX) * strength;
-      const offsetY = (e.clientY - centerY) * strength;
+      const offsetX = (e.clientX - centerX) * cursorConfig.magnetic.strength;
+      const offsetY = (e.clientY - centerY) * cursorConfig.magnetic.strength;
       
       element.style.transform = `translate3d(${offsetX}px, ${offsetY}px, 0)`;
     };

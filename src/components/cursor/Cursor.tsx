@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { motion, useMotionValue, useSpring, AnimatePresence } from "motion/react";
 import { useCursor } from "./CursorProvider";
 import { cn } from "@/lib/utils";
+import { cursorConfig } from "./cursorConfig";
 
 export function Cursor() {
   const { config } = useCursor();
@@ -19,17 +20,16 @@ export function Cursor() {
   const targetY = useMotionValue(0);
 
   // Smooth final position
-  const springConfig = { damping: 25, stiffness: 300, mass: 0.5 };
-  const cursorX = useSpring(targetX, springConfig);
-  const cursorY = useSpring(targetY, springConfig);
+  const cursorX = useSpring(targetX, cursorConfig.animation.position);
+  const cursorY = useSpring(targetY, cursorConfig.animation.position);
 
   // Lighting movement springs (keep these smooth/laggy for effect)
-  const lightingX = useSpring(0, { damping: 20, stiffness: 200 });
-  const lightingY = useSpring(0, { damping: 20, stiffness: 200 });
+  const lightingX = useSpring(0, cursorConfig.animation.lighting);
+  const lightingY = useSpring(0, cursorConfig.animation.lighting);
 
   // Scale for click animation
   const scaleMotion = useMotionValue(1);
-  const scale = useSpring(scaleMotion, { stiffness: 400, damping: 30 });
+  const scale = useSpring(scaleMotion, cursorConfig.animation.clickScale);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -66,18 +66,17 @@ export function Cursor() {
         const centerX = config.rect.left + config.rect.width / 2;
         const centerY = config.rect.top + config.rect.height / 2;
         
-        // Magnetic strength for lighting effect only
-        const strength = 0.2;
-        const offX = (mX - centerX) * strength;
-        const offY = (mY - centerY) * strength;
+        // Magnetic effect
+        const offX = (mX - centerX) * cursorConfig.magnetic.strength;
+        const offY = (mY - centerY) * cursorConfig.magnetic.strength;
         
         // Set target to center + magnetic offset
         targetX.set(centerX + offX);
         targetY.set(centerY + offY);
 
         // Lighting follows the offset amplified
-        lightingX.set(offX * 4); 
-        lightingY.set(offY * 4);
+        lightingX.set(offX * cursorConfig.magnetic.lightingMultiplier); 
+        lightingY.set(offY * cursorConfig.magnetic.lightingMultiplier);
       } else {
         // In default mode, target is the mouse
         targetX.set(mX);
@@ -107,19 +106,22 @@ export function Cursor() {
   if (isBlock && config.rect) {
     // Use uniform padding based on the smaller dimension to ensure equal padding on all sides
     const minDimension = Math.min(config.rect.width, config.rect.height);
-    const padding = Math.max(10, minDimension * 0.10); // 10% of smaller dimension, minimum 20px
+    const padding = Math.max(
+      cursorConfig.block.paddingMin,
+      minDimension * cursorConfig.block.paddingPercent
+    );
     targetWidth = config.rect.width + padding;
     targetHeight = config.rect.height + padding;
-    targetRadius = config.radius || "12px";
+    targetRadius = config.radius || cursorConfig.block.defaultRadius;
   } else if (isText) {
-    targetWidth = 4;
-    // Use line height from config if available, otherwise default to 24px
-    targetHeight = config.lineHeight || 24;
-    targetRadius = "2px";
+    targetWidth = cursorConfig.text.width;
+    // Use line height from config if available, otherwise default
+    targetHeight = config.lineHeight || cursorConfig.text.defaultHeight;
+    targetRadius = cursorConfig.text.radius;
   } else {
-    targetWidth = 20;
-    targetHeight = 20;
-    targetRadius = "50%";
+    targetWidth = cursorConfig.default.size;
+    targetHeight = cursorConfig.default.size;
+    targetRadius = cursorConfig.default.radius;
   }
 
   // Update scale based on click state
@@ -127,17 +129,23 @@ export function Cursor() {
     let clickScale = 1;
     if (isMouseDown) {
       if (isBlock && config.rect) {
-        // Calculate scale to go from 10% padding to 7% padding
+        // Calculate scale to shrink padding when clicked
         const minDimension = Math.min(config.rect.width, config.rect.height);
-        const paddingNormal = Math.max(10, minDimension * 0.10);
-        const paddingClicked = Math.max(7, minDimension * 0.07);
+        const paddingNormal = Math.max(
+          cursorConfig.block.paddingMin,
+          minDimension * cursorConfig.block.paddingPercent
+        );
+        const paddingClicked = Math.max(
+          cursorConfig.block.paddingClickedMin,
+          minDimension * cursorConfig.block.paddingClickedPercent
+        );
         // Calculate the scale needed to shrink the padding
         const widthScale = (config.rect.width + paddingClicked) / (config.rect.width + paddingNormal);
         const heightScale = (config.rect.height + paddingClicked) / (config.rect.height + paddingNormal);
         // Use average to maintain proportions
         clickScale = (widthScale + heightScale) / 2;
       } else {
-        clickScale = 0.9;
+        clickScale = cursorConfig.click.defaultScale;
       }
     }
     scaleMotion.set(clickScale);
@@ -161,19 +169,9 @@ export function Cursor() {
         width: targetWidth,
         height: targetHeight,
         borderRadius: targetRadius,
-        backgroundColor: isBlock ? "rgba(150, 150, 150, 0.08)" : "rgba(150, 150, 150, 0.5)",
+        backgroundColor: isBlock ? cursorConfig.colors.blockBackground : cursorConfig.colors.defaultBackground,
       }}
-      transition={{
-        type: "spring",
-        stiffness: 400,
-        damping: 28,
-        mass: 0.5,
-        scale: {
-          type: "tween",
-          duration: 0.1,
-          ease: "easeOut",
-        }
-      }}
+      transition={cursorConfig.animation.sizeShape}
     >
       <AnimatePresence>
         {isBlock && (
@@ -185,7 +183,7 @@ export function Cursor() {
             style={{
               width: "300%",
               height: "300%",
-              background: "radial-gradient(circle at center, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 50%)",
+              background: cursorConfig.colors.lightingGradient,
               x: lightingX,
               y: lightingY,
               left: "-100%",
