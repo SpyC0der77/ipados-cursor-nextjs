@@ -140,10 +140,13 @@ src/components/cursor/
 
 Works in all modern browsers that support CSS transforms and the Pointer Events API.
 
+## Credits
+
+This implementation was inspired by and incorporates logic from [ipad-cursor](https://github.com/CatsJuice/ipad-cursor) by CatsJuice.
+
+You can see their original implementation demo at [https://cursor.oooo.so/](https://cursor.oooo.so/)
+
 ## License
 
 MIT
 
-## Credits
-
-Inspired by the iPadOS cursor interaction design.
