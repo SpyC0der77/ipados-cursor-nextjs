@@ -2,109 +2,221 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { motion, useMotionValue, useSpring, AnimatePresence } from "motion/react";
-import { useCursor } from "./CursorProvider";
+import { useCursor, CursorType } from "./CursorProvider";
 import { cn } from "@/lib/utils";
 import { cursorConfig } from "./cursorConfig";
 
+// Helper to extract cursor styles from an element
+function getCursorStyle(element: HTMLElement, type: CursorType) {
+  const style = window.getComputedStyle(element);
+  
+  let radius = "0px";
+  // Try to get radius from first child if available (common pattern for wrappers)
+  const child = element.firstElementChild;
+  if (child) {
+    const childStyle = window.getComputedStyle(child);
+    radius = childStyle.borderRadius;
+  } else {
+    radius = style.borderRadius;
+  }
+
+  let lineHeight: number | undefined;
+  if (type === "text") {
+    const targetEl = element.firstElementChild || element;
+    const targetStyle = window.getComputedStyle(targetEl);
+    const lhStr = targetStyle.lineHeight;
+    
+    if (lhStr === 'normal') {
+      lineHeight = parseFloat(targetStyle.fontSize) * 1.2;
+    } else if (lhStr.endsWith('px')) {
+      lineHeight = parseFloat(lhStr);
+    } else {
+      lineHeight = parseFloat(lhStr) * parseFloat(targetStyle.fontSize);
+    }
+  }
+
+  return { radius, lineHeight };
+}
+
 export function Cursor() {
-  const { config } = useCursor();
+  const { config, setConfig } = useCursor();
   const cursorRef = useRef<HTMLDivElement>(null);
   const [isMouseDown, setIsMouseDown] = useState(false);
   
-  // Mouse position (raw)
+  // Track active target state locally to avoid context lag for physics
+  const activeTargetRef = useRef<{
+    element: HTMLElement;
+    baseRect: DOMRect; // The rect WITHOUT transform
+    transform: { x: number; y: number };
+  } | null>(null);
+
+  // Mouse position
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
-  // Final target position (updated instantly based on mode)
+  // Cursor rendering target
   const targetX = useMotionValue(0);
   const targetY = useMotionValue(0);
 
-  // Smooth final position
+  // Smooth physics
   const cursorX = useSpring(targetX, cursorConfig.animation.position);
   const cursorY = useSpring(targetY, cursorConfig.animation.position);
-
-  // Lighting movement springs (keep these smooth/laggy for effect)
   const lightingX = useSpring(0, cursorConfig.animation.lighting);
   const lightingY = useSpring(0, cursorConfig.animation.lighting);
 
-  // Scale for click animation
   const scaleMotion = useMotionValue(1);
   const scale = useSpring(scaleMotion, cursorConfig.animation.clickScale);
 
+  // Main Event Loop
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      mouseX.set(e.clientX);
-      mouseY.set(e.clientY);
-    };
+    let mousePos = { x: 0, y: 0 };
+    let rafId: number;
 
-    const handleMouseDown = () => {
-      setIsMouseDown(true);
-    };
-
-    const handleMouseUp = () => {
-      setIsMouseDown(false);
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("mousedown", handleMouseDown);
-    window.addEventListener("mouseup", handleMouseUp);
-    
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("mousedown", handleMouseDown);
-      window.removeEventListener("mouseup", handleMouseUp);
-    };
-  }, [mouseX, mouseY]);
-
-  useEffect(() => {
-    // Update targets based on mode and mouse
-    const updateTargets = () => {
-      const mX = mouseX.get();
-      const mY = mouseY.get();
-
-      if (config.type === "block" && config.rect) {
-        const centerX = config.rect.left + config.rect.width / 2;
-        const centerY = config.rect.top + config.rect.height / 2;
-        
-        // Magnetic effect
-        const offX = (mX - centerX) * cursorConfig.magnetic.strength;
-        const offY = (mY - centerY) * cursorConfig.magnetic.strength;
-        
-        // Set target to center + magnetic offset
-        targetX.set(centerX + offX);
-        targetY.set(centerY + offY);
-
-        // Lighting follows the offset amplified
-        lightingX.set(offX * cursorConfig.magnetic.lightingMultiplier); 
-        lightingY.set(offY * cursorConfig.magnetic.lightingMultiplier);
-      } else {
-        // In default mode, target is the mouse
-        targetX.set(mX);
-        targetY.set(mY);
+    const handleInput = (e?: MouseEvent | Event) => {
+      // Update mouse pos if it's a mouse event
+      if (e instanceof MouseEvent) {
+        mousePos.x = e.clientX;
+        mousePos.y = e.clientY;
+        mouseX.set(e.clientX);
+        mouseY.set(e.clientY);
       }
+      
+      // On scroll, we use the last known mouse pos
     };
 
-    // Subscribe to mouse changes
-    const unsubscribeX = mouseX.on("change", updateTargets);
-    const unsubscribeY = mouseY.on("change", updateTargets);
-    // Also update when config changes
-    updateTargets();
+    const updateLoop = () => {
+      // 1. Hit Test directly
+      let targetEl: HTMLElement | null = null;
+      let targetType: CursorType = "default";
+
+      // Only check if mouse is on screen
+      if (mousePos.x !== 0 || mousePos.y !== 0) {
+        const el = document.elementFromPoint(mousePos.x, mousePos.y);
+        const hit = el?.closest('[data-cursor-target]') as HTMLElement;
+        if (hit) {
+          targetEl = hit;
+          targetType = (hit.getAttribute("data-cursor-type") as CursorType) || "block";
+        }
+      }
+
+      // 2. Handle Target Change
+      const currentActive = activeTargetRef.current;
+      
+      if (targetEl !== (currentActive?.element || null)) {
+        // cleanup old
+        if (currentActive) {
+          currentActive.element.style.transition = "transform 0.3s cubic-bezier(0.58, 0.09, 0.46, 1.46)";
+          currentActive.element.style.transform = "translate3d(0,0,0)";
+        }
+
+        if (targetEl) {
+           // Setup new
+           const rect = targetEl.getBoundingClientRect();
+           const style = getCursorStyle(targetEl, targetType);
+           
+           // Remove transition for immediate magnetic grab
+           targetEl.style.transition = "none";
+           
+           activeTargetRef.current = {
+             element: targetEl,
+             baseRect: rect, // Initial rect is untransformed usually
+             transform: { x: 0, y: 0 }
+           };
+           
+           setConfig({
+             type: targetType,
+             rect: rect,
+             radius: style.radius,
+             lineHeight: style.lineHeight,
+             activeElement: targetEl,
+           });
+        } else {
+          // No target
+          activeTargetRef.current = null;
+          setConfig({ type: "default", rect: null, activeElement: null });
+        }
+      }
+
+      // 3. Process Active Target (Physics & Magnetic)
+      if (activeTargetRef.current && targetEl) {
+        const { element, transform } = activeTargetRef.current;
+        
+        // Refresh base rect (compensating for our own transform)
+        const visualRect = element.getBoundingClientRect();
+        const baseRect = {
+          left: visualRect.left - transform.x,
+          top: visualRect.top - transform.y,
+          width: visualRect.width,
+          height: visualRect.height
+        };
+        // Update ref's baseRect for stability
+        activeTargetRef.current.baseRect = baseRect as DOMRect;
+
+        // --- Magnetic Logic ---
+        if (targetType === "block") {
+          const centerX = baseRect.left + baseRect.width / 2;
+          const centerY = baseRect.top + baseRect.height / 2;
+          
+          let offX = (mousePos.x - centerX) * cursorConfig.magnetic.strength;
+          let offY = (mousePos.y - centerY) * cursorConfig.magnetic.strength;
+          
+          // Clamp values to limitMultiplier of element size
+          const maxX = baseRect.width * cursorConfig.magnetic.limitMultiplier;
+          const maxY = baseRect.height * cursorConfig.magnetic.limitMultiplier;
+          
+          offX = Math.max(-maxX, Math.min(maxX, offX));
+          offY = Math.max(-maxY, Math.min(maxY, offY));
+          
+          // Apply to element
+          element.style.transform = `translate3d(${offX}px, ${offY}px, 0)`;
+          activeTargetRef.current.transform = { x: offX, y: offY };
+          
+          // Update cursor targets
+          targetX.set(centerX + offX);
+          targetY.set(centerY + offY);
+          
+          lightingX.set(offX * cursorConfig.magnetic.lightingMultiplier);
+          lightingY.set(offY * cursorConfig.magnetic.lightingMultiplier);
+        } else {
+          // Text mode - just follow mouse, no magnetic element move
+          targetX.set(mousePos.x);
+          targetY.set(mousePos.y);
+        }
+      } else {
+        // Default mode
+        targetX.set(mousePos.x);
+        targetY.set(mousePos.y);
+      }
+
+      rafId = requestAnimationFrame(updateLoop);
+    };
+
+    window.addEventListener("mousemove", handleInput);
+    window.addEventListener("scroll", handleInput, { capture: true, passive: true });
+    window.addEventListener("mousedown", () => setIsMouseDown(true));
+    window.addEventListener("mouseup", () => setIsMouseDown(false));
+
+    rafId = requestAnimationFrame(updateLoop);
 
     return () => {
-      unsubscribeX();
-      unsubscribeY();
+      window.removeEventListener("mousemove", handleInput);
+      window.removeEventListener("scroll", handleInput);
+      window.removeEventListener("mousedown", () => setIsMouseDown(true));
+      window.removeEventListener("mouseup", () => setIsMouseDown(false));
+      cancelAnimationFrame(rafId);
     };
-  }, [config, mouseX, mouseY, targetX, targetY, lightingX, lightingY]);
+  }, [mouseX, mouseY, targetX, targetY, lightingX, lightingY, setConfig]);
 
-  // Derived state for animation
-  const isBlock = config.type === "block" && config.rect;
+  // Derived state for rendering
+  const isBlock = config.type === "block" && config.activeElement;
   const isText = config.type === "text";
 
   // Calculate target size
   let targetWidth, targetHeight, targetRadius;
 
-  if (isBlock && config.rect) {
-    // Use uniform padding based on the smaller dimension to ensure equal padding on all sides
+  if (isBlock && config.rect && config.activeElement) {
+    // We actively read the rect from the element because it might have resized/moved
+    // But for size calcs, the cached Config rect is usually fine as long as we don't need pixel-perfect resize-handling every frame
     const minDimension = Math.min(config.rect.width, config.rect.height);
     const padding = Math.max(
       cursorConfig.block.paddingMin,
@@ -115,7 +227,6 @@ export function Cursor() {
     targetRadius = config.radius || cursorConfig.block.defaultRadius;
   } else if (isText) {
     targetWidth = cursorConfig.text.width;
-    // Use line height from config if available, otherwise default
     targetHeight = config.lineHeight || cursorConfig.text.defaultHeight;
     targetRadius = cursorConfig.text.radius;
   } else {
@@ -129,7 +240,6 @@ export function Cursor() {
     let clickScale = 1;
     if (isMouseDown) {
       if (isBlock && config.rect) {
-        // Calculate scale to shrink padding when clicked
         const minDimension = Math.min(config.rect.width, config.rect.height);
         const paddingNormal = Math.max(
           cursorConfig.block.paddingMin,
@@ -139,10 +249,8 @@ export function Cursor() {
           cursorConfig.block.paddingClickedMin,
           minDimension * cursorConfig.block.paddingClickedPercent
         );
-        // Calculate the scale needed to shrink the padding
         const widthScale = (config.rect.width + paddingClicked) / (config.rect.width + paddingNormal);
         const heightScale = (config.rect.height + paddingClicked) / (config.rect.height + paddingNormal);
-        // Use average to maintain proportions
         clickScale = (widthScale + heightScale) / 2;
       } else {
         clickScale = cursorConfig.click.defaultScale;

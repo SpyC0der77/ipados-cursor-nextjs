@@ -9,6 +9,7 @@ interface CursorConfig {
   rect?: DOMRect | null;
   radius?: string;
   lineHeight?: number;
+  activeElement?: HTMLElement | null;
 }
 
 interface CursorContextType {
@@ -23,6 +24,7 @@ export function CursorProvider({ children }: { children: React.ReactNode }) {
   const [config, setConfigState] = useState<CursorConfig>({
     type: "default",
     rect: null,
+    activeElement: null,
   });
 
   const setConfig = useCallback((newConfig: CursorConfig) => {

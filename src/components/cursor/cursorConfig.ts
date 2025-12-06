@@ -42,6 +42,8 @@ export const cursorConfig = {
     strength: 0.2,
     // Lighting effect multiplier
     lightingMultiplier: 4,
+    // Maximum distance the element can move as a % of its size
+    limitMultiplier: 0.1,
   },
 
   // Animation settings
