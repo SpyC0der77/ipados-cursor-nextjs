@@ -1,36 +1,149 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# iPad Cursor App
+
+A standalone implementation of the iPad-style cursor effect using Next.js and Framer Motion. This cursor provides a smooth, magnetic interaction experience similar to iPadOS, with customizable behavior and appearance.
+
+## Features
+
+### 🎯 Three Cursor Modes
+
+- **Default Cursor**: A subtle circular dot that follows your mouse
+- **Block Cursor**: Expands to wrap around interactive elements (buttons, cards) with a magnetic effect
+- **Text Cursor**: A vertical bar that adapts to the line height of text elements
+
+### ✨ Interactive Effects
+
+- **Magnetic Pull**: Elements and cursor move together toward your mouse position
+- **Dynamic Lighting**: Gradient lighting effect that follows mouse movement on block elements
+- **Click Animation**: Smooth scale-down effect when clicking (0.1s duration)
+- **Smart Padding**: Block cursor maintains uniform padding on all sides
+
+### ⚙️ Easy Configuration
+
+All cursor behavior can be customized through a single config file (`src/components/cursor/cursorConfig.ts`):
+
+- Padding percentages and minimums
+- Animation spring settings
+- Magnetic strength
+- Colors and gradients
+- Click behavior
+- Text cursor dimensions
+
+### 🎨 Adaptive Design
+
+- **Auto-detection**: Automatically detects border radius from child elements
+- **Line Height Matching**: Text cursor height matches the actual text line height
+- **Responsive Sizing**: Block cursor padding scales with element size
 
 ## Getting Started
 
-First, run the development server:
+### Installation
 
 ```bash
-npm run dev
+# Install dependencies
+pnpm install
 # or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Development
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+pnpm dev
+# or
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Open [http://localhost:3000](http://localhost:3000) to see the demo.
 
-## Learn More
+### Usage
 
-To learn more about Next.js, take a look at the following resources:
+1. **Wrap your app with the CursorProvider** (in `app/layout.tsx`):
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```tsx
+import { CursorProvider } from '@/components/cursor/CursorProvider';
+import { Cursor } from '@/components/cursor/Cursor';
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+export default function RootLayout({ children }) {
+  return (
+    <html>
+      <body>
+        <CursorProvider>
+          <Cursor />
+          {children}
+        </CursorProvider>
+      </body>
+    </html>
+  );
+}
+```
 
-## Deploy on Vercel
+2. **Wrap interactive elements with CursorTarget**:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```tsx
+import { CursorTarget } from '@/components/cursor/CursorTarget';
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+// For buttons and interactive blocks
+<CursorTarget>
+  <button>Click Me</button>
+</CursorTarget>
+
+// For text
+<CursorTarget type="text">
+  <p>Hover over this text</p>
+</CursorTarget>
+```
+
+## Customization
+
+Edit `src/components/cursor/cursorConfig.ts` to customize:
+
+```typescript
+export const cursorConfig = {
+  block: {
+    paddingPercent: 0.10,        // 10% padding
+    paddingMin: 10,              // Minimum 10px
+    paddingClickedPercent: 0.07, // 7% when clicked
+    paddingClickedMin: 7,        // Minimum 7px when clicked
+  },
+  magnetic: {
+    strength: 0.8,               // Magnetic pull strength (0-1)
+    lightingMultiplier: 4,       // Lighting effect intensity
+  },
+  colors: {
+    blockBackground: "rgba(24, 5, 5, 0.08)",
+    defaultBackground: "rgba(150, 150, 150, 0.5)",
+  },
+  // ... and more!
+};
+```
+
+## Tech Stack
+
+- **Next.js 16** - React framework with App Router
+- **React 19** - UI library
+- **Framer Motion (motion)** - Animation library
+- **TypeScript** - Type safety
+- **Tailwind CSS 4** - Styling
+- **pnpm** - Package manager
+
+## Architecture
+
+```
+src/components/cursor/
+├── cursorConfig.ts      # Centralized configuration
+├── CursorProvider.tsx   # Context provider for cursor state
+├── Cursor.tsx           # Main cursor component
+└── CursorTarget.tsx     # Wrapper for interactive elements
+```
+
+## Browser Support
+
+Works in all modern browsers that support CSS transforms and the Pointer Events API.
+
+## License
+
+MIT
+
+## Credits
+
+Inspired by the iPadOS cursor interaction design.

@@ -1,7 +1,19 @@
 {
   "name": "ipad-cursor-app",
-  "version": "0.1.0",
+  "version": "1.0.0",
+  "description": "A standalone implementation of the iPad-style cursor effect using Next.js and Framer Motion",
   "private": true,
+  "keywords": [
+    "cursor",
+    "ipad",
+    "ipados",
+    "magnetic",
+    "animation",
+    "nextjs",
+    "framer-motion",
+    "react",
+    "typescript"
+  ],
   "scripts": {
     "dev": "next dev",
     "build": "next build",
