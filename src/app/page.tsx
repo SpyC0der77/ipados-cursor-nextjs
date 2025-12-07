@@ -157,11 +157,6 @@ export default function Home() {
                       It morphs into a thin vertical bar that aids in text selection and readability.
                     </p>
                   </CursorTarget>
-                  <CursorTarget type="text">
-                    <p className="text-sm text-gray-500">
-                      <span className="font-mono text-blue-500">const</span> <span className="text-purple-500">developerMode</span> = <span className="text-orange-500">true</span>;
-                    </p>
-                  </CursorTarget>
                 </div>
               </div>
             </div>
