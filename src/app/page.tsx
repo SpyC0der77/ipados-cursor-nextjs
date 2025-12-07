@@ -18,7 +18,7 @@ export default function Home() {
         <header className="text-center space-y-6 pt-12">
           <CursorTarget type="text">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-400 text-xs font-mono mb-4 border border-gray-200 dark:border-gray-800">
-              v2.0.0-beta
+              v1.0.0-beta
             </div>
           </CursorTarget>
           <div>
