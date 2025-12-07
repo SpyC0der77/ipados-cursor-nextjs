@@ -1,251 +1,261 @@
 "use client";
 
 import { CursorTarget } from "@/components/cursor/CursorTarget";
-import { MoveRight, Star, Heart, MessageCircle, Share2, Play, Pause, SkipForward, SkipBack } from "lucide-react";
+import { ArrowRight, Copy, Terminal, MousePointer2, Zap, Layout, Code2 } from "lucide-react";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-[#FAFAFA] dark:bg-[#050505] font-[family-name:var(--font-geist-sans)] selection:bg-blue-100 dark:selection:bg-blue-900/30">
+    <div className="min-h-screen bg-[#FAFAFA] dark:bg-[#050505] font-[family-name:var(--font-geist-sans)] text-gray-900 dark:text-gray-100 selection:bg-blue-100 dark:selection:bg-blue-900/30">
       
-      {/* Background Gradients */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-blue-500/5 rounded-full blur-[120px]" />
-        <div className="absolute bottom-[-20%] right-[-10%] w-[40%] h-[40%] bg-purple-500/5 rounded-full blur-[120px]" />
-      </div>
+      {/* Background Grid */}
+      <div className="fixed inset-0 pointer-events-none opacity-[0.03] dark:opacity-[0.05]" 
+           style={{ backgroundImage: 'radial-gradient(circle, currentColor 1px, transparent 1px)', backgroundSize: '24px 24px' }} 
+      />
 
-      <div className="relative z-10 max-w-[1200px] mx-auto px-6 py-20 pb-32">
+      <div className="relative z-10 max-w-5xl mx-auto px-6 py-20 pb-32 space-y-32">
         
-        {/* Navigation */}
-        <nav className="flex items-center justify-between mb-24">
+        {/* Header */}
+        <header className="text-center space-y-6 pt-12">
           <CursorTarget type="text">
-            <span className="text-lg font-semibold tracking-tight text-gray-900 dark:text-white">iPadOS Cursor</span>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-400 text-xs font-mono mb-4 border border-gray-200 dark:border-gray-800">
+              v2.0.0-beta
+            </div>
           </CursorTarget>
-          <div className="flex gap-4">
-            <CursorTarget>
-              <button className="px-5 py-2.5 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors rounded-full">
-                Documentation
-              </button>
-            </CursorTarget>
-            <CursorTarget>
-              <button className="px-5 py-2.5 text-sm font-medium bg-black dark:bg-white text-white dark:text-black rounded-full shadow-lg shadow-black/5 dark:shadow-white/5 active:scale-95 transition-all">
-                Download
-              </button>
-            </CursorTarget>
-          </div>
-        </nav>
-
-        {/* Hero Section */}
-        <section className="text-center space-y-8 mb-32">
-          <div className="space-y-4">
+          <div>
             <CursorTarget type="text">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 text-xs font-semibold uppercase tracking-wider mb-4 border border-blue-500/20">
-                New v2.0
-              </div>
-            </CursorTarget>
-            <CursorTarget type="text">
-              <h1 className="text-6xl md:text-8xl font-bold tracking-tighter leading-[0.9] text-gray-900 dark:text-white">
-                Fluid. Magnetic. <br />
-                <span className="bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">Alive.</span>
+              <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-4">
+                iPad Cursor for Web
               </h1>
+            </CursorTarget>
+            <CursorTarget type="text">
+              <p className="text-xl text-gray-500 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed">
+                A physics-based cursor engine that faithfully recreates the iPadOS interaction model. 
+                Zero-config magnetic snapping, auto-radius detection, and scroll-aware tracking.
+              </p>
             </CursorTarget>
           </div>
           
-          <CursorTarget type="text">
-            <p className="max-w-xl mx-auto text-xl text-gray-500 dark:text-gray-400 leading-relaxed font-light">
-              A faithful recreation of the iPadOS cursor engine. 
-              Hit-testing, magnetic snapping, and fluid text morphism.
-            </p>
-          </CursorTarget>
-
           <div className="flex justify-center gap-4">
             <CursorTarget>
-              <button className="group relative px-8 py-4 bg-gray-900 dark:bg-white text-white dark:text-black rounded-2xl font-semibold text-lg overflow-hidden transition-transform">
-                <span className="relative z-10 flex items-center gap-2">
-                  Get Started <MoveRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </span>
+              <button className="flex items-center gap-2 px-6 py-3 bg-black dark:bg-white text-white dark:text-black rounded-lg font-medium text-sm hover:scale-105 active:scale-95 transition-transform">
+                <Terminal className="w-4 h-4" />
+                NPM Package Coming Soon
               </button>
             </CursorTarget>
+            <CursorTarget>
+              <a 
+                href="https://github.com/SpyC0der77/ipados-cursor-nextjs" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-6 py-3 bg-white dark:bg-gray-900 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-800 rounded-lg font-medium text-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+              >
+                View Source
+              </a>
+            </CursorTarget>
+          </div>
+        </header>
+
+        {/* Component Playground */}
+        <section className="space-y-12">
+          <div className="flex items-center gap-4 py-4 border-b border-gray-200 dark:border-gray-800">
+            <div className="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
+              <MousePointer2 className="w-5 h-5" />
+            </div>
+            <CursorTarget type="text">
+              <h2 className="text-2xl font-bold">Interactive Playground</h2>
+            </CursorTarget>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+            {/* Buttons Demo */}
+            <div className="space-y-8">
+              <div className="space-y-2">
+                <CursorTarget type="text">
+                  <h3 className="font-semibold text-lg">Button Variants</h3>
+                </CursorTarget>
+                <CursorTarget type="text">
+                  <p className="text-sm text-gray-500">The cursor adapts to the shape and size of interactive elements.</p>
+                </CursorTarget>
+              </div>
+
+              <div className="p-8 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 space-y-8">
+                {/* Primary/Solid */}
+                <div className="flex flex-wrap gap-4 items-center">
+                  <CursorTarget>
+                    <button className="px-6 py-2.5 bg-blue-600 text-white rounded-lg font-medium text-sm">
+                      Primary Button
+                    </button>
+                  </CursorTarget>
+                  <CursorTarget>
+                    <button className="px-6 py-2.5 bg-gray-900 dark:bg-white text-white dark:text-black rounded-full font-medium text-sm">
+                      Pill Shape
+                    </button>
+                  </CursorTarget>
+                </div>
+
+                {/* Secondary/Outline */}
+                <div className="flex flex-wrap gap-4 items-center">
+                  <CursorTarget>
+                    <button className="px-6 py-2.5 border border-gray-200 dark:border-gray-700 rounded-lg font-medium text-sm hover:border-gray-300 dark:hover:border-gray-600 transition-colors">
+                      Outline
+                    </button>
+                  </CursorTarget>
+                  <CursorTarget>
+                    <button className="px-6 py-2.5 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg font-medium text-sm">
+                      Secondary
+                    </button>
+                  </CursorTarget>
+                </div>
+
+                {/* Icon Buttons */}
+                <div className="flex flex-wrap gap-4 items-center">
+                  <CursorTarget>
+                    <button className="w-10 h-10 rounded-lg flex items-center justify-center bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+                      <Layout className="w-4 h-4" />
+                    </button>
+                  </CursorTarget>
+                  <CursorTarget>
+                    <button className="w-12 h-12 rounded-full flex items-center justify-center border border-gray-200 dark:border-gray-700">
+                      <Zap className="w-5 h-5" />
+                    </button>
+                  </CursorTarget>
+                  <CursorTarget>
+                    <button className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-sm font-medium text-gray-500">
+                      Ghost Button
+                    </button>
+                  </CursorTarget>
+                </div>
+              </div>
+            </div>
+
+            {/* Typography Demo */}
+            <div className="space-y-8">
+              <div className="space-y-2">
+                <CursorTarget type="text">
+                  <h3 className="font-semibold text-lg">Smart Text Handling</h3>
+                </CursorTarget>
+                <CursorTarget type="text">
+                  <p className="text-sm text-gray-500">Vertical bar cursor matches line-height and font-size automatically.</p>
+                </CursorTarget>
+              </div>
+
+              <div className="p-8 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 space-y-6">
+                <div>
+                  <CursorTarget type="text">
+                    <h1 className="text-4xl font-bold tracking-tight">Display Heading</h1>
+                  </CursorTarget>
+                </div>
+                <div>
+                  <CursorTarget type="text">
+                    <h2 className="text-2xl font-semibold">Section Title</h2>
+                  </CursorTarget>
+                </div>
+                <div className="space-y-4">
+                  <CursorTarget type="text">
+                    <p className="leading-relaxed text-gray-600 dark:text-gray-300">
+                      This is a standard paragraph showing how the cursor flows over body text. 
+                      It morphs into a thin vertical bar that aids in text selection and readability.
+                    </p>
+                  </CursorTarget>
+                  <CursorTarget type="text">
+                    <p className="text-sm text-gray-500">
+                      <span className="font-mono text-blue-500">const</span> <span className="text-purple-500">developerMode</span> = <span className="text-orange-500">true</span>;
+                    </p>
+                  </CursorTarget>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
-        {/* Bento Grid Showcase */}
-        <section className="grid grid-cols-1 md:grid-cols-6 md:grid-rows-3 gap-6">
-          
-          {/* Music Player Card - Large Square */}
-          <div className="md:col-span-3 md:row-span-2 relative group overflow-hidden bg-white dark:bg-gray-900 rounded-[2.5rem] border border-gray-100 dark:border-gray-800 shadow-2xl shadow-gray-200/50 dark:shadow-none p-8">
-            <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-gray-50/50 to-transparent dark:from-gray-800/50 pointer-events-none" />
-            
-            <div className="h-full flex flex-col justify-between">
-              <div className="flex justify-between items-start">
-                <CursorTarget type="text">
-                  <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Now Playing</span>
-                </CursorTarget>
-                <CursorTarget>
-                  <button className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-600 dark:text-gray-300">
-                    <Heart className="w-5 h-5" />
-                  </button>
-                </CursorTarget>
-              </div>
-
-              <div className="space-y-6">
-                <div className="w-32 h-32 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-500 shadow-lg flex items-center justify-center text-white text-4xl">
-                  🎵
-                </div>
-                <div>
-                  <CursorTarget type="text">
-                    <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Midnight City</h3>
-                  </CursorTarget>
-                  <CursorTarget type="text">
-                    <p className="text-gray-500 text-lg">M83 • Hurry Up, We're Dreaming</p>
-                  </CursorTarget>
-                </div>
-
-                {/* Music Controls */}
-                <div className="flex items-center gap-6">
-                  <CursorTarget>
-                    <button className="w-12 h-12 flex items-center justify-center text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors rounded-full">
-                      <SkipBack className="w-6 h-6" fill="currentColor" />
-                    </button>
-                  </CursorTarget>
-                  <CursorTarget>
-                    <button className="w-16 h-16 flex items-center justify-center bg-black dark:bg-white text-white dark:text-black rounded-full hover:scale-105 transition-transform shadow-xl">
-                      <Pause className="w-6 h-6" fill="currentColor" />
-                    </button>
-                  </CursorTarget>
-                  <CursorTarget>
-                    <button className="w-12 h-12 flex items-center justify-center text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors rounded-full">
-                      <SkipForward className="w-6 h-6" fill="currentColor" />
-                    </button>
-                  </CursorTarget>
-                </div>
-              </div>
+        {/* How It Works */}
+        <section className="space-y-12">
+          <div className="flex items-center gap-4 py-4 border-b border-gray-200 dark:border-gray-800">
+            <div className="w-8 h-8 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-600 dark:text-purple-400">
+              <Code2 className="w-5 h-5" />
             </div>
+            <CursorTarget type="text">
+              <h2 className="text-2xl font-bold">How It Works</h2>
+            </CursorTarget>
           </div>
 
-          {/* Social Card - Tall */}
-          <div className="md:col-span-2 md:row-span-3 bg-[#1DA1F2]/5 dark:bg-[#1DA1F2]/10 rounded-[2.5rem] p-8 border border-[#1DA1F2]/10 relative overflow-hidden">
-            <div className="space-y-8">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-[#1DA1F2] to-[#0d8bd9]" />
-                <div>
-                  <CursorTarget type="text">
-                    <h4 className="font-bold text-gray-900 dark:text-white">Twitter / X</h4>
-                  </CursorTarget>
-                  <CursorTarget type="text">
-                    <p className="text-sm text-gray-500">@ipad_cursor</p>
-                  </CursorTarget>
-                </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="space-y-4">
+              <div className="w-12 h-12 rounded-xl bg-gray-100 dark:bg-gray-900 flex items-center justify-center border border-gray-200 dark:border-gray-800">
+                <Zap className="w-6 h-6" />
               </div>
-
               <CursorTarget type="text">
-                <p className="text-xl leading-relaxed text-gray-900 dark:text-white font-medium">
-                  The magnetic interaction model is fascinating. It's not just about snapping; it's about <span className="text-[#1DA1F2]">intent prediction</span>.
+                <h3 className="font-bold text-lg">Motion Spring Physics</h3>
+              </CursorTarget>
+              <CursorTarget type="text">
+                <p className="text-gray-500 dark:text-gray-400 leading-relaxed text-sm">
+                  The cursor core is built on <strong>Motion</strong> (formerly Framer Motion). We use independent <code>useSpring</code> hooks for X/Y coordinates, width, height, and radius. This ensures that every state transition—whether entering a button or moving between text lines—is interpolated with fluid, organic momentum (stiffness: 300, damping: 25) rather than linear tweening.
                 </p>
               </CursorTarget>
+            </div>
 
-              <div className="pt-4 border-t border-gray-200/50 dark:border-white/5 flex justify-between">
-                <CursorTarget>
-                  <button className="flex items-center gap-2 px-4 py-2 rounded-xl hover:bg-[#1DA1F2]/10 text-gray-600 dark:text-gray-400 transition-colors">
-                    <MessageCircle className="w-5 h-5" />
-                    <span className="text-sm font-medium">24</span>
-                  </button>
-                </CursorTarget>
-                <CursorTarget>
-                  <button className="flex items-center gap-2 px-4 py-2 rounded-xl hover:bg-green-500/10 text-gray-600 dark:text-gray-400 transition-colors">
-                    <Share2 className="w-5 h-5" />
-                    <span className="text-sm font-medium">12</span>
-                  </button>
-                </CursorTarget>
-                <CursorTarget>
-                  <button className="flex items-center gap-2 px-4 py-2 rounded-xl hover:bg-pink-500/10 text-gray-600 dark:text-gray-400 transition-colors">
-                    <Heart className="w-5 h-5" />
-                    <span className="text-sm font-medium">182</span>
-                  </button>
-                </CursorTarget>
+            <div className="space-y-4">
+              <div className="w-12 h-12 rounded-xl bg-gray-100 dark:bg-gray-900 flex items-center justify-center border border-gray-200 dark:border-gray-800">
+                <Layout className="w-6 h-6" />
               </div>
-            </div>
-          </div>
-
-          {/* Metrics Card - Small */}
-          <div className="md:col-span-1 md:row-span-1 bg-gradient-to-br from-orange-400 to-pink-500 rounded-[2rem] p-6 text-white flex flex-col justify-between shadow-lg">
-             <CursorTarget type="text">
-               <span className="text-sm font-medium text-white/80">Revenue</span>
-             </CursorTarget>
-             <div>
-               <CursorTarget type="text">
-                 <h3 className="text-3xl font-bold tracking-tight">$84.2k</h3>
-               </CursorTarget>
-               <CursorTarget type="text">
-                 <span className="text-xs bg-white/20 px-2 py-1 rounded-full mt-2 inline-block">+12.5%</span>
-               </CursorTarget>
-             </div>
-          </div>
-
-          {/* Active Users - Small */}
-           <div className="md:col-span-1 md:row-span-1 bg-white dark:bg-gray-800 rounded-[2rem] p-6 border border-gray-100 dark:border-gray-700 flex flex-col justify-between">
-             <div className="flex justify-between items-start">
-               <CursorTarget type="text">
-                 <span className="text-sm font-medium text-gray-500">Users</span>
-               </CursorTarget>
-               <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-             </div>
-             <CursorTarget type="text">
-               <h3 className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">2.4k</h3>
-             </CursorTarget>
-          </div>
-
-          {/* Action Row - Wide */}
-          <div className="md:col-span-3 md:row-span-1 bg-gray-900 dark:bg-white rounded-[2.5rem] p-8 flex items-center justify-between overflow-hidden relative">
-            <div className="relative z-10 max-w-sm">
               <CursorTarget type="text">
-                <h3 className="text-2xl font-bold text-white dark:text-black mb-2">Ready to ship?</h3>
+                <h3 className="font-bold text-lg">Reconciliation Loop</h3>
               </CursorTarget>
               <CursorTarget type="text">
-                <p className="text-gray-400 dark:text-gray-600">Integrate in less than 5 minutes.</p>
-              </CursorTarget>
-            </div>
-            
-            <div className="flex gap-4 relative z-10">
-              <CursorTarget>
-                <button className="h-14 px-8 rounded-2xl bg-white/10 dark:bg-black/5 text-white dark:text-black font-semibold backdrop-blur-md border border-white/10 dark:border-black/5 hover:bg-white/20 transition-colors">
-                  Copy
-                </button>
-              </CursorTarget>
-              <CursorTarget>
-                <button className="h-14 px-8 rounded-2xl bg-blue-600 text-white font-semibold shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 transition-shadow">
-                  Install
-                </button>
+                <p className="text-gray-500 dark:text-gray-400 leading-relaxed text-sm">
+                  To handle scroll-aware hit testing without performance overhead, we run a single <code>requestAnimationFrame</code> loop. This loop constantly polls <code>document.elementFromPoint</code> to determine the active target, bypassing the need for thousands of <code>onMouseEnter</code> listeners. This decouples the physics engine from React's render cycle, ensuring 60fps performance even on complex pages.
+                </p>
               </CursorTarget>
             </div>
 
-            {/* Decor code bg */}
-            <div className="absolute right-[-50px] top-[-50px] opacity-10 rotate-12 pointer-events-none select-none">
-              <pre className="text-xs text-white dark:text-black font-mono">
-                {`npm install @ipad-cursor
-import { Cursor } from ...`}
+            <div className="space-y-4">
+              <div className="w-12 h-12 rounded-xl bg-gray-100 dark:bg-gray-900 flex items-center justify-center border border-gray-200 dark:border-gray-800">
+                <MousePointer2 className="w-6 h-6" />
+              </div>
+              <CursorTarget type="text">
+                <h3 className="font-bold text-lg">Magnetic Projection</h3>
+              </CursorTarget>
+              <CursorTarget type="text">
+                <p className="text-gray-500 dark:text-gray-400 leading-relaxed text-sm">
+                  The magnetic effect isn't just a CSS transform. We calculate the delta between the mouse pointer and the element's center, then apply a clamped spring force. We directly manipulate the DOM element's <code>transform: translate3d(...)</code> property inside the physics frame, allowing the button to "pull" towards the cursor up to a defined limit (e.g., 40% of its size) before breaking free.
+                </p>
+              </CursorTarget>
+            </div>
+          </div>
+
+          {/* Usage Example */}
+          <div className="rounded-2xl bg-[#0d1117] border border-gray-800 overflow-hidden">
+            <div className="flex items-center gap-2 px-4 py-3 border-b border-gray-800 bg-[#161b22]">
+              <div className="w-3 h-3 rounded-full bg-[#fa7970]" />
+              <div className="w-3 h-3 rounded-full bg-[#faa356]" />
+              <div className="w-3 h-3 rounded-full bg-[#7ce38b]" />
+              <span className="ml-2 text-xs text-gray-500 font-mono">ExampleUsage.tsx</span>
+            </div>
+            <div className="p-6 overflow-x-auto">
+              <pre className="text-sm font-mono text-gray-300">
+{`import { CursorTarget } from "@ipad-cursor/react";
+
+export function MyComponent() {
+  return (
+    <div className="flex gap-4">
+      {/* Interactive Button (Block Cursor) */}
+      <CursorTarget>
+        <button className="btn-primary">
+          Submit Form
+        </button>
+      </CursorTarget>
+
+      {/* Text Content (Bar Cursor) */}
+      <CursorTarget type="text">
+        <h1>Welcome to the future</h1>
+      </CursorTarget>
+    </div>
+  );
+}`}
               </pre>
             </div>
           </div>
-
-          {/* Footer Card */}
-           <div className="md:col-span-1 md:row-span-1 bg-gray-100 dark:bg-gray-800/50 rounded-[2rem] flex items-center justify-center p-6 border border-transparent hover:border-gray-200 dark:hover:border-gray-700 transition-colors group">
-              <CursorTarget>
-                <button className="w-full h-full flex flex-col items-center justify-center gap-2 text-gray-400 group-hover:text-blue-500 transition-colors">
-                  <Star className="w-8 h-8" />
-                  <span className="text-xs font-semibold uppercase">Github</span>
-                </button>
-              </CursorTarget>
-           </div>
-
         </section>
-
-        {/* Footer */}
-        <footer className="mt-32 text-center text-gray-400 dark:text-gray-600">
-           <CursorTarget type="text">
-             <p className="text-sm">Designed with absolute precision.</p>
-           </CursorTarget>
-        </footer>
-
       </div>
     </div>
   );
