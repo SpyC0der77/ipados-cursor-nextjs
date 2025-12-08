@@ -26,9 +26,12 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-/* Hide default cursor everywhere */
-*,
-*::before,
-*::after {
-  cursor: none !important;
+/* Hide default cursor everywhere only on desktop/fine pointers */
+@media (pointer: fine) {
+
+  *,
+  *::before,
+  *::after {
+    cursor: none !important;
+  }
 }

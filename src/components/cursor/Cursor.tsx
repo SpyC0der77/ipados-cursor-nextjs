@@ -65,10 +65,20 @@ export function Cursor() {
   const lightingY = useSpring(0, cursorConfig.animation.lighting);
 
   const scaleMotion = useMotionValue(1);
+
+
   const scale = useSpring(scaleMotion, cursorConfig.animation.clickScale);
+
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    setIsVisible(window.matchMedia("(pointer: fine)").matches);
+  }, []);
 
   // Main Event Loop
   useEffect(() => {
+    if (!isVisible) return;
+    
     let mousePos = { x: 0, y: 0 };
     let rafId: number;
 
@@ -205,7 +215,7 @@ export function Cursor() {
       window.removeEventListener("mouseup", () => setIsMouseDown(false));
       cancelAnimationFrame(rafId);
     };
-  }, [mouseX, mouseY, targetX, targetY, lightingX, lightingY, setConfig]);
+  }, [mouseX, mouseY, targetX, targetY, lightingX, lightingY, setConfig, isVisible]);
 
   // Derived state for rendering
   const isBlock = config.type === "block" && config.activeElement;
@@ -258,6 +268,8 @@ export function Cursor() {
     }
     scaleMotion.set(clickScale);
   }, [isMouseDown, isBlock, config.rect, scaleMotion]);
+
+  if (!isVisible) return null;
 
   return (
     <motion.div
