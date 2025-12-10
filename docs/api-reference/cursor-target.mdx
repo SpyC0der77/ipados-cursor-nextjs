@@ -1,0 +1,57 @@
+---
+title: CursorTarget
+description: "Wrapper component to make elements interactive"
+---
+
+The `CursorTarget` is the primary component for defining interactive areas in your application.
+
+## Props
+
+<ResponseField name="children" type="ReactNode" required>
+  The content to be wrapped. This should usually be a single interactive element like a button, link, or div.
+</ResponseField>
+
+<ResponseField name="type" type="CursorType" default="block">
+  The type of cursor interaction to trigger.
+  - `block`: Morphs the cursor into a block shape matching the element.
+  - `text`: Morphs the cursor into a text beam.
+  - `default`: Keeps the default dot cursor (useful for resetting).
+</ResponseField>
+
+<ResponseField name="magnetic" type="boolean" default="true">
+  Whether the element should be magnetically attracted to the cursor. Only applies when `type="block"`.
+</ResponseField>
+
+<ResponseField name="stickiness" type="boolean" default="false">
+  Enables a "sticky" tracking mode where the cursor stays centered on the element until moved significantly.
+</ResponseField>
+
+<ResponseField name="className" type="string">
+  Optional CSS class names to apply to the wrapper div.
+</ResponseField>
+
+## Examples
+
+### Basic Button
+
+```tsx
+<CursorTarget>
+  <button className="btn-primary">Click Me</button>
+</CursorTarget>
+```
+
+### Text Link
+
+```tsx
+<CursorTarget type="text">
+  <a href="/about">About Us</a>
+</CursorTarget>
+```
+
+### Non-Magnetic Block
+
+```tsx
+<CursorTarget type="block" magnetic={false}>
+  <div className="card">I don't move</div>
+</CursorTarget>
+```

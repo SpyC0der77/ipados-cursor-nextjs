@@ -39,7 +39,7 @@ function getCursorStyle(element: HTMLElement, type: CursorType) {
 }
 
 export function Cursor() {
-  const { config, setConfig } = useCursor();
+  const { config, setConfig, updateCursor } = useCursor();
   const cursorRef = useRef<HTMLDivElement>(null);
   const [isMouseDown, setIsMouseDown] = useState(false);
   
@@ -47,6 +47,7 @@ export function Cursor() {
   const activeTargetRef = useRef<{
     element: HTMLElement;
     baseRect: DOMRect; // The rect WITHOUT transform
+    lastRect: DOMRect; // The last reported visual rect
     transform: { x: number; y: number };
   } | null>(null);
 
@@ -59,8 +60,11 @@ export function Cursor() {
   const targetY = useMotionValue(0);
 
   // Smooth physics
-  const cursorX = useSpring(targetX, cursorConfig.animation.position);
-  const cursorY = useSpring(targetY, cursorConfig.animation.position);
+  // Use sticky spring if configured
+  const springConfig = config.stickiness ? cursorConfig.animation.sticky : cursorConfig.animation.position;
+
+  const cursorX = useSpring(targetX, springConfig);
+  const cursorY = useSpring(targetY, springConfig);
   const lightingX = useSpring(0, cursorConfig.animation.lighting);
   const lightingY = useSpring(0, cursorConfig.animation.lighting);
 
@@ -98,6 +102,8 @@ export function Cursor() {
       // 1. Hit Test directly
       let targetEl: HTMLElement | null = null;
       let targetType: CursorType = "default";
+      let targetMagnetic = true;
+      let targetStickiness = false;
 
       // Only check if mouse is on screen
       if (mousePos.x !== 0 || mousePos.y !== 0) {
@@ -106,6 +112,10 @@ export function Cursor() {
         if (hit) {
           targetEl = hit;
           targetType = (hit.getAttribute("data-cursor-type") as CursorType) || "block";
+          const magAttr = hit.getAttribute("data-cursor-magnetic");
+          targetMagnetic = magAttr !== "false";
+          const stickAttr = hit.getAttribute("data-cursor-stickiness");
+          targetStickiness = stickAttr === "true";
         }
       }
 
@@ -124,12 +134,15 @@ export function Cursor() {
            const rect = targetEl.getBoundingClientRect();
            const style = getCursorStyle(targetEl, targetType);
            
-           // Remove transition for immediate magnetic grab
-           targetEl.style.transition = "none";
+           // Remove transition for immediate magnetic grab ONLY if magnetic
+           if (targetMagnetic) {
+             targetEl.style.transition = "none";
+           }
            
            activeTargetRef.current = {
              element: targetEl,
              baseRect: rect, // Initial rect is untransformed usually
+             lastRect: rect,
              transform: { x: 0, y: 0 }
            };
            
@@ -139,20 +152,28 @@ export function Cursor() {
              radius: style.radius,
              lineHeight: style.lineHeight,
              activeElement: targetEl,
+             stickiness: targetStickiness,
            });
         } else {
           // No target
           activeTargetRef.current = null;
-          setConfig({ type: "default", rect: null, activeElement: null });
+          setConfig({ type: "default", rect: null, activeElement: null, stickiness: false });
         }
       }
 
       // 3. Process Active Target (Physics & Magnetic)
       if (activeTargetRef.current && targetEl) {
-        const { element, transform } = activeTargetRef.current;
+        const { element, transform, lastRect } = activeTargetRef.current;
         
         // Refresh base rect (compensating for our own transform)
         const visualRect = element.getBoundingClientRect();
+        
+        // Check for resize (e.g. dnd-kit scaling or content change)
+        if (Math.abs(visualRect.width - lastRect.width) > 0.5 || Math.abs(visualRect.height - lastRect.height) > 0.5) {
+            activeTargetRef.current.lastRect = visualRect;
+            updateCursor({ rect: visualRect });
+        }
+
         const baseRect = {
           left: visualRect.left - transform.x,
           top: visualRect.top - transform.y,
@@ -167,26 +188,40 @@ export function Cursor() {
           const centerX = baseRect.left + baseRect.width / 2;
           const centerY = baseRect.top + baseRect.height / 2;
           
-          let offX = (mousePos.x - centerX) * cursorConfig.magnetic.strength;
-          let offY = (mousePos.y - centerY) * cursorConfig.magnetic.strength;
+          const distRawX = (mousePos.x - centerX);
+          const distRawY = (mousePos.y - centerY);
           
-          // Clamp values to limitMultiplier of element size
+          // Calculate theoretical magnetic pull
+          const strength = cursorConfig.magnetic.strength;
+          let magX = distRawX * strength;
+          let magY = distRawY * strength;
+           
+          // Clamp values
           const maxX = baseRect.width * cursorConfig.magnetic.limitMultiplier;
           const maxY = baseRect.height * cursorConfig.magnetic.limitMultiplier;
+           
+          magX = Math.max(-maxX, Math.min(maxX, magX));
+          magY = Math.max(-maxY, Math.min(maxY, magY));
           
-          offX = Math.max(-maxX, Math.min(maxX, offX));
-          offY = Math.max(-maxY, Math.min(maxY, offY));
-          
-          // Apply to element
-          element.style.transform = `translate3d(${offX}px, ${offY}px, 0)`;
-          activeTargetRef.current.transform = { x: offX, y: offY };
+          let offX = 0;
+          let offY = 0;
+
+          if (targetMagnetic) {
+             offX = magX;
+             offY = magY;
+             
+             // Apply to element
+             element.style.transform = `translate3d(${offX}px, ${offY}px, 0)`;
+             activeTargetRef.current.transform = { x: offX, y: offY };
+          }
           
           // Update cursor targets
           targetX.set(centerX + offX);
           targetY.set(centerY + offY);
           
-          lightingX.set(offX * cursorConfig.magnetic.lightingMultiplier);
-          lightingY.set(offY * cursorConfig.magnetic.lightingMultiplier);
+          // Use magX/magY for lighting regardless of actual element movement
+          lightingX.set(magX * cursorConfig.magnetic.lightingMultiplier);
+          lightingY.set(magY * cursorConfig.magnetic.lightingMultiplier);
         } else {
           // Text mode - just follow mouse, no magnetic element move
           targetX.set(mousePos.x);

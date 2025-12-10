@@ -1,7 +1,7 @@
 "use client";
 
 import { CursorTarget } from "@/components/cursor/CursorTarget";
-import { ArrowRight, Copy, Terminal, MousePointer2, Zap, Layout, Code2 } from "lucide-react";
+import { ArrowRight, Copy, Terminal, MousePointer2, Zap, Layout, Code2, Settings, FileCode, MousePointerClick, Magnet } from "lucide-react";
 
 export default function Home() {
   return (
@@ -109,6 +109,11 @@ export default function Home() {
 
                 {/* Icon Buttons */}
                 <div className="flex flex-wrap gap-4 items-center">
+                  <CursorTarget magnetic={false}>
+                    <button className="px-6 py-2.5 bg-gray-50 dark:bg-gray-800/50 text-gray-500 rounded-lg font-medium text-sm border border-dashed border-gray-300 dark:border-gray-700">
+                      Static Block
+                    </button>
+                  </CursorTarget>
                   <CursorTarget>
                     <button className="w-10 h-10 rounded-lg flex items-center justify-center bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
                       <Layout className="w-4 h-4" />
@@ -160,6 +165,108 @@ export default function Home() {
                 </div>
               </div>
             </div>
+          </div>
+        </section>
+
+        {/* Documentation Section */}
+        <section className="space-y-12">
+          <div className="flex items-center gap-4 py-4 border-b border-gray-200 dark:border-gray-800">
+            <div className="w-8 h-8 rounded-lg bg-teal-100 dark:bg-teal-900/30 flex items-center justify-center text-teal-600 dark:text-teal-400">
+              <FileCode className="w-5 h-5" />
+            </div>
+            <CursorTarget type="text">
+              <h2 className="text-2xl font-bold">API Documentation</h2>
+            </CursorTarget>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+             
+             {/* Core Component */}
+             <div className="space-y-8">
+                <div className="space-y-4">
+                    <h3 className="text-xl font-bold flex items-center gap-2">
+                        <Layout className="w-5 h-5 text-indigo-500" />
+                        Component
+                    </h3>
+                    <p className="text-gray-500 dark:text-gray-400 leading-relaxed">
+                        Wrap any interactive element with <code>&lt;CursorTarget /&gt;</code> to enable the effect. 
+                        The cursor will automatically detect the element's dimensions and border radius.
+                    </p>
+                    
+                    <div className="bg-[#0d1117] border border-gray-800 rounded-xl overflow-hidden text-sm">
+                        <div className="flex items-center gap-2 px-4 py-3 border-b border-gray-800 bg-[#161b22]">
+                            <span className="text-xs text-gray-500 font-mono">MyComponent.tsx</span>
+                        </div>
+                        <div className="p-4 overflow-x-auto">
+                            <pre className="text-gray-300 font-mono">
+{`<CursorTarget magnetic={true}>
+  <button className="...">
+    Hover Me
+  </button>
+</CursorTarget>`}
+                            </pre>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="space-y-4">
+                    <h3 className="text-xl font-bold flex items-center gap-2">
+                        <Settings className="w-5 h-5 text-gray-500" />
+                        Configuration
+                    </h3>
+                    <p className="text-gray-500 dark:text-gray-400 leading-relaxed">
+                        Global settings can be tweaked in <code>cursorConfig.ts</code>. Adjust physics springs, colors, and spatial padding for a completely custom feel.
+                    </p>
+                </div>
+             </div>
+
+             {/* Props Reference */}
+             <div className="space-y-6">
+                <h3 className="text-xl font-bold flex items-center gap-2">
+                    <MousePointerClick className="w-5 h-5 text-blue-500" />
+                    Props API
+                </h3>
+                
+                <div className="space-y-4">
+                    {/* type prop */}
+                    <div className="p-5 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 hover:border-blue-200 dark:hover:border-blue-800 transition-colors group">
+                        <div className="flex items-start justify-between mb-2">
+                            <code className="text-blue-600 dark:text-blue-400 font-mono font-bold bg-blue-50 dark:bg-blue-900/30 px-2 py-1 rounded">type</code>
+                            <span className="text-xs font-mono text-gray-400">"block" | "text"</span>
+                        </div>
+                        <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">
+                            Determines the shape of the cursor.
+                        </p>
+                        <ul className="space-y-1 text-sm text-gray-500 dark:text-gray-400">
+                            <li>• <strong>block</strong> (default): Morphs into the element's shape.</li>
+                            <li>• <strong>text</strong>: Morphs into a vertical beam for text selection.</li>
+                        </ul>
+                    </div>
+
+                    {/* magnetic prop */}
+                    <div className="p-5 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 hover:border-purple-200 dark:hover:border-purple-800 transition-colors group">
+                        <div className="flex items-start justify-between mb-2">
+                            <code className="text-purple-600 dark:text-purple-400 font-mono font-bold bg-purple-50 dark:bg-purple-900/30 px-2 py-1 rounded">magnetic</code>
+                            <span className="text-xs font-mono text-gray-400">boolean (default: true)</span>
+                        </div>
+                        <p className="text-sm text-gray-600 dark:text-gray-300">
+                             Enables the "pull" effect where the element physically moves towards the cursor. 
+                             Disable this for static layouts or when using sticky dragging.
+                        </p>
+                    </div>
+
+                    {/* stickiness prop */}
+                    <div className="p-5 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 hover:border-orange-200 dark:hover:border-orange-800 transition-colors group">
+                        <div className="flex items-start justify-between mb-2">
+                             <code className="text-orange-600 dark:text-orange-400 font-mono font-bold bg-orange-50 dark:bg-orange-900/30 px-2 py-1 rounded">stickiness</code>
+                             <span className="text-xs font-mono text-gray-400">boolean (default: false)</span>
+                        </div>
+                        <p className="text-sm text-gray-600 dark:text-gray-300">
+                             Increases tracking stiffness to nearly instant levels. Essential for <strong>drag-and-drop</strong> elements to ensure the cursor stays locked to the item being dragged without spring lag.
+                        </p>
+                    </div>
+                </div>
+             </div>
           </div>
         </section>
 

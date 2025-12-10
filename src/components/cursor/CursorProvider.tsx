@@ -10,6 +10,7 @@ interface CursorConfig {
   radius?: string;
   lineHeight?: number;
   activeElement?: HTMLElement | null;
+  stickiness?: boolean;
 }
 
 interface CursorContextType {

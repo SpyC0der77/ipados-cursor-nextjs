@@ -1,0 +1,64 @@
+---
+title: Configuration
+description: "Customize the behavior and appearance of the cursor"
+---
+
+The cursor behavior is controlled by a central configuration object. You can adjust these values in `src/components/cursor/cursorConfig.ts`.
+
+## options
+
+### Block Cursor
+
+Settings for the `block` cursor type, used for buttons and interactive areas.
+
+| Property | Type | Default | Description |
+|---|---|---|---|
+| `block.paddingPercent` | `number` | `0.10` | Padding as a percentage of the element's smaller dimension. |
+| `block.paddingMin` | `number` | `10` | Minimum padding in pixels. |
+| `block.paddingClickedPercent` | `number` | `0.07` | Padding when the element is clicked (active state). |
+| `block.paddingClickedMin` | `number` | `7` | Minimum clicked padding in pixels. |
+| `block.defaultRadius` | `string` | `"12px"` | Default border radius if one cannot be detected from the element. |
+
+### Text Cursor
+
+Settings for the `text` cursor type, used for text inputs and prose.
+
+| Property | Type | Default | Description |
+|---|---|---|---|
+| `text.width` | `number` | `4` | Width of the text cursor beam in pixels. |
+| `text.defaultHeight` | `number` | `24` | Default height if line-height cannot be detected. |
+| `text.radius` | `string` | `"2px"` | Border radius of the text cursor beam. |
+
+### Magnetic Effect
+
+Controls how strongly the cursor snaps to elements.
+
+| Property | Type | Default | Description |
+|---|---|---|---|
+| `magnetic.strength` | `number` | `0.2` | Strength of the magnetic pull (0-1). |
+| `magnetic.lightingMultiplier` | `number` | `4` | varying intensity of the lighting effect on the cursor. |
+| `magnetic.limitMultiplier` | `number` | `0.1` | Max distance the element moves as % of size. |
+
+### Animation
+
+Fine-tune the physics of the cursor movement using spring configurations. Uses Framer Motion spring format.
+
+```typescript
+animation: {
+  position: { damping: 25, stiffness: 300, mass: 0.5 },
+  lighting: { damping: 20, stiffness: 200 },
+  sizeShape: { stiffness: 400, damping: 28, mass: 0.5 },
+  clickScale: { stiffness: 400, damping: 30 },
+  sticky: { damping: 40, stiffness: 1000, mass: 0.1 },
+}
+```
+
+### Colors
+
+Customize the visual appearance.
+
+| Property | Type | Default | Description |
+|---|---|---|---|
+| `colors.blockBackground` | `string` | `rgba(24, 5, 5, 0.08)` | Background color of the block cursor. |
+| `colors.defaultBackground` | `string` | `rgba(150, 150, 150, 0.5)` | Background color of the default dot cursor. |
+| `colors.lightingGradient` | `string` | `radial-gradient(...)` | Gradient used for the magnetic lighting effect. |

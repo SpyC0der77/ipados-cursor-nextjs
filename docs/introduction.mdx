@@ -1,0 +1,47 @@
+---
+title: Introduction
+description: 'iPadOS-style cursor interactions for that premium web feel.'
+---
+
+<img
+  className="block dark:hidden"
+  src="/images/hero-light.png"
+  alt="Hero Light"
+/>
+<img
+  className="hidden dark:block"
+  src="/images/hero-dark.png"
+  alt="Hero Dark"
+/>
+
+## Setting the Scene
+
+Most web cursors are boring. They sit there, pointing at things, disconnected from the UI they interact with.
+
+**The iPad Cursor** changes that. It's fluid, organic, and physically aware of the elements it touches. It doesn't just point; it morphs, snaps, and glows.
+
+## Features
+
+- **Morphing Physics**: The cursor smoothly transforms its shape to match the interactive elements it hovers over.
+- **Magnetic Attraction**: Elements are pulled towards the cursor slightly, creating a tangible connection.
+- **Sticky Tracking**: For drag-and-drop interfaces, the cursor locks onto elements for precise control.
+- **Dynamic Lighting**: A subtle bloom effect follows the cursor inside block elements, adding depth.
+- **Optimized for Mouse**: Best used on desktop devices with fine pointing devices.
+
+## Quick Example
+
+Wrap any button or link to give it the magic touch:
+
+```jsx
+import { CursorTarget } from '@/components/cursor/CursorTarget';
+
+function MyButton() {
+  return (
+    <CursorTarget>
+      <button className="px-6 py-2 bg-blue-500 text-white rounded-lg">
+        Hover Me
+      </button>
+    </CursorTarget>
+  );
+}
+```
