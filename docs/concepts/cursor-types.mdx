@@ -1,0 +1,42 @@
+---
+title: Cursor Types
+description: "Understanding the different modes of the iPad Cursor"
+---
+
+The iPad Cursor adapts its shape and behavior based on the content it is interacting with. There are three primary cursor types:
+
+## Default (Dot)
+
+The default state of the cursor is a small, translucent circle (dot). This is used when the cursor is navigating empty space or non-interactive elements.
+
+- **Appearance**: Small circle
+- **Usage**: General navigation
+
+## Block
+
+The `block` type is designed for interactive elements like buttons, cards, and navigation items. When hovering over a target with `type="block"`, the cursor:
+
+1. Morphs into the shape of the element (rounded rectangle).
+2. Snaps to the element's position.
+3. Applies a subtle magnetic effect to the element itself.
+4. Adds a lighting effect that follows the mouse position within the block.
+
+```tsx
+<CursorTarget type="block">
+  <button>Click Me</button>
+</CursorTarget>
+```
+
+## Text
+
+The `text` type is specialized for text content, links, and input fields. When hovering over a target with `type="text"`, the cursor:
+
+1. Morphs into a vertical beam (caret).
+2. Matches the height of the text line.
+3. Snaps to the text content.
+
+```tsx
+<CursorTarget type="text">
+  <a href="#">Read More</a>
+</CursorTarget>
+```

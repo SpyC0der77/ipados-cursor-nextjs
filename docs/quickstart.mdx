@@ -1,0 +1,67 @@
+---
+title: Quickstart
+description: "Get started with iPad Cursor in your React application"
+---
+
+## Installation
+
+First, install the necessary dependencies:
+
+<CodeGroup>
+
+```bash npm
+npm install motion clsx tailwind-merge
+```
+
+```bash pnpm
+pnpm add motion clsx tailwind-merge
+```
+
+```bash yarn
+yarn add motion clsx tailwind-merge
+```
+
+```bash bun
+bun add motion clsx tailwind-merge
+```
+
+</CodeGroup>
+
+## Setup
+
+1. **Wrap your application**: Add the `CursorProvider` and `Cursor` component to your root layout or app component.
+
+```tsx
+import { CursorProvider, Cursor } from "@/components/cursor";
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <body>
+        <CursorProvider>
+          <Cursor />
+          {children}
+        </CursorProvider>
+      </body>
+    </html>
+  );
+}
+```
+
+## Usage
+
+Use the `CursorTarget` component to create interactive elements that the cursor will snap to or interact with.
+
+```tsx
+import { CursorTarget } from "@/components/cursor/CursorTarget";
+
+function MyButton() {
+  return (
+    <CursorTarget type="block">
+      <button className="px-4 py-2 bg-blue-500 rounded-lg text-white">
+        Hover Me
+      </button>
+    </CursorTarget>
+  );
+}
+```

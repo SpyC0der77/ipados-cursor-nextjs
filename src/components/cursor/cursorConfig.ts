@@ -66,10 +66,15 @@ export const cursorConfig = {
       damping: 28,
       mass: 0.5,
     },
-    // Spring configuration for click scale animation
     clickScale: {
       stiffness: 400,
       damping: 30,
+    },
+    // Strict/Instant tracking spring
+    sticky: {
+      damping: 40,
+      stiffness: 1000,
+      mass: 0.1,
     },
   },
 

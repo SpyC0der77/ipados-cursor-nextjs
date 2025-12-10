@@ -1,0 +1,50 @@
+---
+title: 'CursorTarget'
+description: 'The primary wrapper component for interactive elements.'
+---
+
+The `CursorTarget` component is the bridge between your UI and the custom cursor. It handles mouse events and communicates size/position data to the cursor engine.
+
+## Props
+
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `children` | `ReactNode` | `required` | The interactive element to wrap. |
+| `type` | `'block' | 'text'` | `'block'` | The shape morph style. |
+| `magnetic` | `boolean` | `true` | If true, the child element will be slightly pulled towards the cursor. |
+| `stickiness` | `boolean` | `false` | If true, the cursor tracks instantly without spring lag. Ideal for drag-and-drop. |
+| `className` | `string` | `undefined` | Optional classes for the wrapper div (rarely needed). |
+
+## Examples
+
+### Basic Button (Magnetic)
+
+The default behavior is perfect for buttons, cards, and navigation items.
+
+```jsx
+<CursorTarget magnetic={true}>
+  <button className="btn">Submit</button>
+</CursorTarget>
+```
+
+### Text Selection
+
+For text content, use the `text` type. The cursor will morph into a vertical beam (caret) that matches the line height.
+
+```jsx
+<CursorTarget type="text">
+  <p>Hover over this text to see the effect.</p>
+</CursorTarget>
+```
+
+### Drag & Drop (Sticky)
+
+When building draggable interfaces, you don't want the cursor to lag behind the element it's holding. Enable `stickiness` and disable `magnetic` (to prevent the element from fighting the drag transform).
+
+```jsx
+<CursorTarget stickiness={true} magnetic={false}>
+  <div draggable>
+    Drag me around!
+  </div>
+</CursorTarget>
+```

@@ -1,0 +1,33 @@
+---
+title: Magnetic Effect
+description: "How the magnetic attraction works"
+---
+
+One of the signature features of the iPad cursor is the "magnetic" effect. This creates a tactile connection between the user's input and the UI elements.
+
+## How it works
+
+When the cursor approaches a magnetic element (usually a `block` type), the element itself is slightly pulled towards the cursor. This indicates interactivity and makes the interface feel alive.
+
+### Configuration
+
+You can control the intensity of this effect using the `magnetic` prop on `CursorTarget` or globally in the configuration.
+
+- **`magnetic={true}`** (Default): The element will move slightly towards the cursor.
+- **`magnetic={false}`**: The element remains static, but the cursor still snaps to it.
+
+```tsx
+<CursorTarget type="block" magnetic={false}>
+  <div className="card">Static Card</div>
+</CursorTarget>
+```
+
+### Stickiness
+
+For an even stronger effect, you can enable `stickiness`. This makes the cursor "stick" to the center of the element more aggressively, useful for smaller circular buttons or icons.
+
+```tsx
+<CursorTarget type="block" stickiness={true}>
+  <button className="icon-btn">X</button>
+</CursorTarget>
+```
