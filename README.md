@@ -1,152 +1,63 @@
-# iPad Cursor App
+# iPadOS cursor for Next.js
 
-A standalone implementation of the iPad-style cursor effect using Next.js and Framer Motion. This cursor provides a smooth, magnetic interaction experience similar to iPadOS, with customizable behavior and appearance.
+A React implementation of an iPadOS-style pointer. The cursor follows the mouse as a dot, expands around interactive blocks, and becomes a vertical bar over text targets.
 
-## Features
+![iPadOS cursor demo](docs/images/app.png)
 
-### 🎯 Three Cursor Modes
+[Live demo](https://ipados-cursor.vercel.app)
 
-- **Default Cursor**: A subtle circular dot that follows your mouse
-- **Block Cursor**: Expands to wrap around interactive elements (buttons, cards) with a magnetic effect
-- **Text Cursor**: A vertical bar that adapts to the line height of text elements
+## Run locally
 
-### ✨ Interactive Effects
-
-- **Magnetic Pull**: Elements and cursor move together toward your mouse position
-- **Dynamic Lighting**: Gradient lighting effect that follows mouse movement on block elements
-- **Click Animation**: Smooth scale-down effect when clicking (0.1s duration)
-- **Smart Padding**: Block cursor maintains uniform padding on all sides
-
-### ⚙️ Easy Configuration
-
-All cursor behavior can be customized through a single config file (`src/components/cursor/cursorConfig.ts`):
-
-- Padding percentages and minimums
-- Animation spring settings
-- Magnetic strength
-- Colors and gradients
-- Click behavior
-- Text cursor dimensions
-
-### 🎨 Adaptive Design
-
-- **Auto-detection**: Automatically detects border radius from child elements
-- **Line Height Matching**: Text cursor height matches the actual text line height
-- **Responsive Sizing**: Block cursor padding scales with element size
-
-## Getting Started
-
-### Installation
+Use Node.js 22 and pnpm.
 
 ```bash
-# Install dependencies
-pnpm install
-# or
-npm install
-```
-
-### Development
-
-```bash
+git clone https://github.com/SpyC0der77/ipados-cursor-nextjs.git
+cd ipados-cursor-nextjs
+pnpm install --frozen-lockfile
 pnpm dev
-# or
-npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to see the demo.
+Open [localhost:3000](http://localhost:3000). Use `pnpm build` followed by `pnpm start` for a production build, and `pnpm lint` for ESLint. No API key or backend is required.
 
-### Usage
+## Add it to a page
 
-1. **Wrap your app with the CursorProvider** (in `app/layout.tsx`):
+Mount `CursorProvider` and `Cursor` around the content, as in [`src/app/layout.tsx`](src/app/layout.tsx):
 
 ```tsx
-import { CursorProvider } from '@/components/cursor/CursorProvider';
-import { Cursor } from '@/components/cursor/Cursor';
+import { CursorProvider } from "@/components/cursor/CursorProvider";
+import { Cursor } from "@/components/cursor/Cursor";
+import { CursorTarget } from "@/components/cursor/CursorTarget";
 
-export default function RootLayout({ children }) {
+export function CursorDemo() {
   return (
-    <html>
-      <body>
-        <CursorProvider>
-          <Cursor />
-          {children}
-        </CursorProvider>
-      </body>
-    </html>
+    <CursorProvider>
+      <Cursor />
+      <CursorTarget>
+        <button>Hover here</button>
+      </CursorTarget>
+      <CursorTarget type="text">
+        <p>Text cursor target</p>
+      </CursorTarget>
+    </CursorProvider>
   );
 }
 ```
 
-2. **Wrap interactive elements with CursorTarget**:
+Use this component within a client component. The `@/` imports assume this project's alias configuration.
 
-```tsx
-import { CursorTarget } from '@/components/cursor/CursorTarget';
+| `CursorTarget` prop | Default | Behavior |
+| --- | --- | --- |
+| `type` | `"block"` | Choose a block or text target |
+| `magnetic` | `true` | Allow the magnetic interaction |
+| `stickiness` | `false` | Use the configured strict tracking behavior |
+| `className` | Unset | Apply classes to the target wrapper |
 
-// For buttons and interactive blocks
-<CursorTarget>
-  <button>Click Me</button>
-</CursorTarget>
+## Configuration
 
-// For text
-<CursorTarget type="text">
-  <p>Hover over this text</p>
-</CursorTarget>
-```
+Edit [`cursorConfig.ts`](src/components/cursor/cursorConfig.ts) to change padding, springs, colors, magnetic strength, and click behavior. The current magnetic strength is `0.2`. Block targets adapt to element border radii; text targets use the text line height.
 
-## Customization
+The implementation uses the `motion` package, React 19, Next.js 16, and Tailwind CSS 4. It is intended for mouse and pointer interaction; a static screenshot cannot show the magnetic movement.
 
-Edit `src/components/cursor/cursorConfig.ts` to customize:
+## Documentation and credits
 
-```typescript
-export const cursorConfig = {
-  block: {
-    paddingPercent: 0.10,        // 10% padding
-    paddingMin: 10,              // Minimum 10px
-    paddingClickedPercent: 0.07, // 7% when clicked
-    paddingClickedMin: 7,        // Minimum 7px when clicked
-  },
-  magnetic: {
-    strength: 0.8,               // Magnetic pull strength (0-1)
-    lightingMultiplier: 4,       // Lighting effect intensity
-  },
-  colors: {
-    blockBackground: "rgba(24, 5, 5, 0.08)",
-    defaultBackground: "rgba(150, 150, 150, 0.5)",
-  },
-  // ... and more!
-};
-```
-
-## Tech Stack
-
-- **Next.js 16** - React framework with App Router
-- **React 19** - UI library
-- **Framer Motion (motion)** - Animation library
-- **TypeScript** - Type safety
-- **Tailwind CSS 4** - Styling
-- **pnpm** - Package manager
-
-## Architecture
-
-```
-src/components/cursor/
-├── cursorConfig.ts      # Centralized configuration
-├── CursorProvider.tsx   # Context provider for cursor state
-├── Cursor.tsx           # Main cursor component
-└── CursorTarget.tsx     # Wrapper for interactive elements
-```
-
-## Browser Support
-
-Works in all modern browsers that support CSS transforms and the Pointer Events API.
-
-## Credits
-
-This implementation was inspired by and incorporates logic from [ipad-cursor](https://github.com/CatsJuice/ipad-cursor) by CatsJuice.
-
-You can see their original implementation demo at [https://cursor.oooo.so/](https://cursor.oooo.so/)
-
-## License
-
-MIT
-
+The [`docs/`](docs/) folder contains usage, configuration, and API documentation. The implementation is inspired by [CatsJuice/ipad-cursor](https://github.com/CatsJuice/ipad-cursor). See [`docs/LICENSE`](docs/LICENSE) for the license included with the documentation.
